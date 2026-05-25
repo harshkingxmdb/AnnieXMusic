@@ -540,4 +540,91 @@ class YouTubeAPI:
                     logger.error(f"Invalid response from API: {str(e)}")
                     return None
                 finally:
-                    s
+                    session.close()
+                
+                status = videoData.get('status')
+                if status == 'success':
+                    video_url = videoData['video_url']
+                    #video_url = base64.b64decode(videolink).decode() removed in 3.5.0
+                    
+                    result = await download_with_ytdlp(video_url, filepath, headers)
+                    if result:
+                        return result
+                    
+                    result = await download_with_requests_fallback(video_url, filepath, headers)
+                    if result:
+                        return result
+                    
+                    return None
+                    
+                elif status == 'error':
+                    logger.error(f"API Error: {videoData.get('message', 'Unknown error from API.')}")
+                    return None
+                else:
+                    logger.error("Could not fetch Backend \nPlease contact API provider.")
+                    return None
+                    
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Network error while fetching video info: {str(e)}")
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid response from proxy: {str(e)}")
+            except Exception as e:
+                logger.error(f"Error in video download: {str(e)}")
+            
+            return None
+        
+        def song_video_dl():
+            formats = f"{format_id}+140"
+            fpath = f"downloads/{title}"
+            ydl_optssx = {
+                "format": formats,
+                "outtmpl": fpath,
+                "geo_bypass": True,
+                "nocheckcertificate": True,
+                "quiet": True,
+                "no_warnings": True,
+                "cookiefile" : cookie_txt_file(),
+                "prefer_ffmpeg": True,
+                "merge_output_format": "mp4",
+            }
+            x = yt_dlp.YoutubeDL(ydl_optssx)
+            x.download([link])
+
+        def song_audio_dl():
+            fpath = f"downloads/{title}.%(ext)s"
+            ydl_optssx = {
+                "format": format_id,
+                "outtmpl": fpath,
+                "geo_bypass": True,
+                "nocheckcertificate": True,
+                "quiet": True,
+                "no_warnings": True,
+                "cookiefile" : cookie_txt_file(),
+                "prefer_ffmpeg": True,
+                "postprocessors": [
+                    {
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "mp3",
+                        "preferredquality": "192",
+                    }
+                ],
+            }
+            x = yt_dlp.YoutubeDL(ydl_optssx)
+            x.download([link])
+
+        if songvideo:
+            await loop.run_in_executor(None, song_video_dl)
+            fpath = f"downloads/{title}.mp4"
+            return fpath
+        elif songaudio:
+            await loop.run_in_executor(None, song_audio_dl)
+            fpath = f"downloads/{title}.mp3"
+            return fpath
+        elif video:
+            direct = True
+            downloaded_file = await video_dl(vid_id)
+        else:
+            direct = True
+            downloaded_file = await audio_dl(vid_id)
+        
+        return downloaded_file, direct
