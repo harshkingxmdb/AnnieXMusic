@@ -1,7 +1,3 @@
-# SECURE yt.py
-# Original structure preserved
-# API SYSTEM + YTPROXY KEPT
-# Security hardened version
 
 import asyncio
 import glob
