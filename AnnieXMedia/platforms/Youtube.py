@@ -588,3 +588,421 @@ class YouTubeAPI:
             )
 
             return session
+            async def download_with_ytdlp(
+            url,
+            filepath,
+            headers=None,
+            max_retries=3
+        ):
+
+            default_headers = {
+                "User-Agent": (
+                    "Mozilla/5.0 "
+                    "(Windows NT 10.0; Win64; x64)"
+                ),
+                "Accept": "*/*",
+                "Referer": "https://www.youtube.com/",
+            }
+
+            merged_headers = default_headers.copy()
+
+            if headers:
+                merged_headers.update(headers)
+
+            def run_download():
+
+                ydl_opts = {
+                    "quiet": True,
+                    "no_warnings": True,
+                    "outtmpl": filepath,
+                    "force_overwrites": True,
+                    "nopart": True,
+                    "retries": max_retries,
+                    "http_headers": merged_headers,
+                    "concurrent_fragment_downloads": 8,
+                    "socket_timeout": 20,
+                    "max_filesize": 500 * 1024 * 1024,
+                    "nocheckcertificate": True,
+                }
+
+                with yt_dlp.YoutubeDL(
+                    ydl_opts
+                ) as ydl:
+                    ydl.download([url])
+
+            try:
+
+                if os.path.exists(filepath):
+                    self.dl_stats["existing_files"] += 1
+                    return filepath
+
+                await loop.run_in_executor(
+                    None,
+                    run_download
+                )
+
+                if os.path.exists(filepath):
+                    return filepath
+
+            except Exception:
+                logger.exception(
+                    "yt-dlp download failed"
+                )
+
+            if os.path.exists(filepath):
+                os.remove(filepath)
+
+            return None
+
+        async def download_with_requests_fallback(
+            url,
+            filepath,
+            headers=None
+        ):
+
+            session = create_session()
+
+            try:
+
+                response = session.get(
+                    url,
+                    headers=headers,
+                    stream=True,
+                    timeout=(10, 60)
+                )
+
+                response.raise_for_status()
+
+                with open(filepath, "wb") as file:
+
+                    for chunk in response.iter_content(
+                        chunk_size=1024 * 1024
+                    ):
+
+                        if chunk:
+                            file.write(chunk)
+
+                return filepath
+
+            except Exception:
+                logger.exception(
+                    "Requests fallback failed"
+                )
+
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+
+                return None
+
+            finally:
+                session.close()
+
+        async def audio_dl(vid_id):
+
+            try:
+
+                if not YT_API_KEY:
+                    logger.error(
+                        "YT_API_KEY missing"
+                    )
+                    return None
+
+                if not YTPROXY:
+                    logger.error(
+                        "YTPROXY_URL missing"
+                    )
+                    return None
+
+                if not is_safe_proxy(YTPROXY):
+                    logger.error(
+                        "Unsafe proxy blocked"
+                    )
+                    return None
+
+                headers = {
+                    "x-api-key": YT_API_KEY,
+                    "User-Agent": (
+                        "Mozilla/5.0 "
+                        "(Windows NT 10.0; Win64; x64)"
+                    ),
+                }
+
+                filepath = os.path.join(
+                    DOWNLOAD_DIR,
+                    f"{vid_id}.mp3"
+                )
+
+                if os.path.exists(filepath):
+                    self.dl_stats["existing_files"] += 1
+                    return filepath
+
+                session = create_session()
+
+                try:
+
+                    response = session.get(
+                        f"{YTPROXY}/info/{vid_id}",
+                        headers=headers,
+                        timeout=(10, 60),
+                    )
+
+                    response.raise_for_status()
+
+                    songData = response.json()
+
+                finally:
+                    session.close()
+
+                status = songData.get("status")
+
+                if status != "success":
+                    logger.error(
+                        "Audio API failed"
+                    )
+                    return None
+
+                audio_url = songData.get(
+                    "audio_url"
+                )
+
+                if not audio_url:
+                    return None
+
+                self.dl_stats[
+                    "okflix_downloads"
+                ] += 1
+
+                result = await download_with_ytdlp(
+                    audio_url,
+                    filepath,
+                    headers
+                )
+
+                if result:
+                    return result
+
+                result = (
+                    await download_with_requests_fallback(
+                        audio_url,
+                        filepath,
+                        headers
+                    )
+                )
+
+                return result
+
+            except Exception:
+                logger.exception(
+                    "Audio download failed"
+                )
+                return None
+
+        async def video_dl(vid_id):
+
+            try:
+
+                if not YT_API_KEY:
+                    logger.error(
+                        "YT_API_KEY missing"
+                    )
+                    return None
+
+                if not YTPROXY:
+                    logger.error(
+                        "YTPROXY_URL missing"
+                    )
+                    return None
+
+                if not is_safe_proxy(YTPROXY):
+                    logger.error(
+                        "Unsafe proxy blocked"
+                    )
+                    return None
+
+                headers = {
+                    "x-api-key": YT_API_KEY,
+                    "User-Agent": (
+                        "Mozilla/5.0 "
+                        "(Windows NT 10.0; Win64; x64)"
+                    ),
+                }
+
+                filepath = os.path.join(
+                    DOWNLOAD_DIR,
+                    f"{vid_id}.mp4"
+                )
+
+                if os.path.exists(filepath):
+                    self.dl_stats["existing_files"] += 1
+                    return filepath
+
+                session = create_session()
+
+                try:
+
+                    response = session.get(
+                        f"{YTPROXY}/info/{vid_id}",
+                        headers=headers,
+                        timeout=(10, 60),
+                    )
+
+                    response.raise_for_status()
+
+                    videoData = response.json()
+
+                finally:
+                    session.close()
+
+                status = videoData.get("status")
+
+                if status != "success":
+                    logger.error(
+                        "Video API failed"
+                    )
+                    return None
+
+                video_url = videoData.get(
+                    "video_url"
+                )
+
+                if not video_url:
+                    return None
+
+                self.dl_stats[
+                    "okflix_downloads"
+                ] += 1
+
+                result = await download_with_ytdlp(
+                    video_url,
+                    filepath,
+                    headers
+                )
+
+                if result:
+                    return result
+
+                result = (
+                    await download_with_requests_fallback(
+                        video_url,
+                        filepath,
+                        headers
+                    )
+                )
+
+                return result
+
+            except Exception:
+                logger.exception(
+                    "Video download failed"
+                )
+                return None
+
+        def song_video_dl():
+
+            filepath = os.path.join(
+                DOWNLOAD_DIR,
+                f"{safe_title}.mp4"
+            )
+
+            ydl_opts = {
+                "format": f"{format_id}+140",
+                "outtmpl": filepath,
+                "geo_bypass": True,
+                "nocheckcertificate": True,
+                "quiet": True,
+                "no_warnings": True,
+                "cookiefile": cookie_txt_file(),
+                "prefer_ffmpeg": True,
+                "merge_output_format": "mp4",
+                "socket_timeout": 20,
+                "max_filesize": (
+                    500 * 1024 * 1024
+                ),
+            }
+
+            with yt_dlp.YoutubeDL(
+                ydl_opts
+            ) as ydl:
+                ydl.download([link])
+
+        def song_audio_dl():
+
+            filepath = os.path.join(
+                DOWNLOAD_DIR,
+                f"{safe_title}.%(ext)s"
+            )
+
+            ydl_opts = {
+                "format": format_id,
+                "outtmpl": filepath,
+                "geo_bypass": True,
+                "nocheckcertificate": True,
+                "quiet": True,
+                "no_warnings": True,
+                "cookiefile": cookie_txt_file(),
+                "prefer_ffmpeg": True,
+                "socket_timeout": 20,
+                "max_filesize": (
+                    500 * 1024 * 1024
+                ),
+                "postprocessors": [
+                    {
+                        "key": (
+                            "FFmpegExtractAudio"
+                        ),
+                        "preferredcodec": "mp3",
+                        "preferredquality": "192",
+                    }
+                ],
+            }
+
+            with yt_dlp.YoutubeDL(
+                ydl_opts
+            ) as ydl:
+                ydl.download([link])
+
+        self.dl_stats["total_requests"] += 1
+
+        if songvideo:
+
+            await loop.run_in_executor(
+                None,
+                song_video_dl
+            )
+
+            filepath = os.path.join(
+                DOWNLOAD_DIR,
+                f"{safe_title}.mp4"
+            )
+
+            return filepath
+
+        elif songaudio:
+
+            await loop.run_in_executor(
+                None,
+                song_audio_dl
+            )
+
+            filepath = os.path.join(
+                DOWNLOAD_DIR,
+                f"{safe_title}.mp3"
+            )
+
+            return filepath
+
+        elif video:
+
+            downloaded_file = await video_dl(
+                vid_id
+            )
+
+            return downloaded_file, True
+
+        else:
+
+            downloaded_file = await audio_dl(
+                vid_id
+            )
+
+            return downloaded_file, True
