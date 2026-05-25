@@ -1,10 +1,10 @@
 aiofiles
 aiohttp
 apscheduler
-asyncio
-bing_image_downloader
+beautifulsoup4
 bs4
 deepai
+dnspython
 edge-tts
 ffmpeg-python
 future
@@ -12,18 +12,19 @@ gitpython
 google-api-python-client
 gpytranslate
 gtts
+hachoir
 heroku3
-httpx[http2]>=0.28.1
-kurigram>=2.2.14
+httpx[http2]==0.27.2
+kurigram==2.2.13
 lexica-api
 motor
 nekosbest
 numpy
 opencv-python
-pillow>=12.0.0
+pillow==12.0.0
 psutil
-ntgcalls>=2.0.6
-py-tgcalls>=2.2.8
+ntgcalls==2.0.6
+py-tgcalls==2.2.8
 pycryptodome
 pydub
 pyfiglet
@@ -37,8 +38,17 @@ speedtest-cli
 SpeechRecognition
 spotipy
 telegraph
-pytgcrypto
+tgcrypto
 unidecode
 wget
-yt-dlp[default]==2025.12.8
-git+https://github.com/CertifiedCoders/youtube-search-python
+yt-dlp==2025.10.22
+youtube-search
+youtube-search-python
+
+# ============================================================================
+# SPATIAL AUDIO MODULE (NEW - Added for binaural/Dolby processing)
+# ============================================================================
+scipy==1.11.1
+soundfile==0.12.1
+librosa==0.10.0
+aiofiles==23.1.0
