@@ -1,23 +1,45 @@
-﻿# Authored By Certified Coders © 2025
+# Authored By Certified Coders © 2025
+
 from typing import Union
 
 from pyrogram.types import InlineKeyboardButton
+from pyrogram.enums import ButtonStyle
 
 
 def setting_markup(_):
     buttons = [
         [
-            InlineKeyboardButton(text=_["ST_B_1"], callback_data="AUTH_SETTINGS"),
-            InlineKeyboardButton(text=_["ST_B_3"], callback_data="LANGUAGE_SETTINGS"),
+            InlineKeyboardButton(
+                text=_["ST_B_1"],
+                callback_data="AUTH_SETTINGS",
+                style=ButtonStyle.PRIMARY,
+            ),
+            InlineKeyboardButton(
+                text=_["ST_B_3"],
+                callback_data="LANGUAGE_SETTINGS",
+                style=ButtonStyle.SUCCESS,
+            ),
         ],
         [
-            InlineKeyboardButton(text=_["ST_B_2"], callback_data="PLAYBACK_SETTINGS"),
+            InlineKeyboardButton(
+                text=_["ST_B_2"],
+                callback_data="PLAYBACK_SETTINGS",
+                style=ButtonStyle.SECONDARY,
+            ),
         ],
         [
-            InlineKeyboardButton(text=_["ST_B_4"], callback_data="VOTE_SETTINGS"),
+            InlineKeyboardButton(
+                text=_["ST_B_4"],
+                callback_data="VOTE_SETTINGS",
+                style=ButtonStyle.PRIMARY,
+            ),
         ],
         [
-            InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),
+            InlineKeyboardButton(
+                text=_["CLOSE_BUTTON"],
+                callback_data="close",
+                style=ButtonStyle.DANGER,
+            ),
         ],
     ]
     return buttons
@@ -26,26 +48,45 @@ def setting_markup(_):
 def vote_mode_markup(_, current, mode: Union[bool, str] = None):
     buttons = [
         [
-            InlineKeyboardButton(text="Vᴏᴛɪɴɢ ᴍᴏᴅᴇ ➜", callback_data="VOTE_MODE_INFO"),
+            InlineKeyboardButton(
+                text="Vᴏᴛɪɴɢ ᴍᴏᴅᴇ ➜",
+                callback_data="VOTE_MODE_INFO",
+                style=ButtonStyle.SECONDARY,
+            ),
             InlineKeyboardButton(
                 text=_["ST_B_5"] if mode == True else _["ST_B_6"],
                 callback_data="TOGGLE_VOTE_MODE",
+                style=ButtonStyle.SUCCESS if mode == True else ButtonStyle.DANGER,
             ),
         ],
         [
-            InlineKeyboardButton(text="-2", callback_data="DECREASE_VOTE_COUNT"),
+            InlineKeyboardButton(
+                text="-2",
+                callback_data="DECREASE_VOTE_COUNT",
+                style=ButtonStyle.DANGER,
+            ),
             InlineKeyboardButton(
                 text=f"ᴄᴜʀʀᴇɴᴛ : {current}",
                 callback_data="CURRENT_VOTE_INFO",
+                style=ButtonStyle.SECONDARY,
             ),
-            InlineKeyboardButton(text="+2", callback_data="INCREASE_VOTE_COUNT"),
+            InlineKeyboardButton(
+                text="+2",
+                callback_data="INCREASE_VOTE_COUNT",
+                style=ButtonStyle.SUCCESS,
+            ),
         ],
         [
             InlineKeyboardButton(
                 text=_["BACK_BUTTON"],
                 callback_data="SETTINGS_BACK",
+                style=ButtonStyle.SECONDARY,
             ),
-            InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),
+            InlineKeyboardButton(
+                text=_["CLOSE_BUTTON"],
+                callback_data="close",
+                style=ButtonStyle.DANGER,
+            ),
         ],
     ]
     return buttons
@@ -54,21 +95,35 @@ def vote_mode_markup(_, current, mode: Union[bool, str] = None):
 def auth_users_markup(_, status: Union[bool, str] = None):
     buttons = [
         [
-            InlineKeyboardButton(text=_["ST_B_7"], callback_data="AUTH_USERS_INFO"),
+            InlineKeyboardButton(
+                text=_["ST_B_7"],
+                callback_data="AUTH_USERS_INFO",
+                style=ButtonStyle.SECONDARY,
+            ),
             InlineKeyboardButton(
                 text=_["ST_B_8"] if status == True else _["ST_B_9"],
                 callback_data="TOGGLE_AUTH_MODE",
+                style=ButtonStyle.SUCCESS if status == True else ButtonStyle.DANGER,
             ),
         ],
         [
-            InlineKeyboardButton(text=_["ST_B_1"], callback_data="VIEW_AUTH_USERS"),
+            InlineKeyboardButton(
+                text=_["ST_B_1"],
+                callback_data="VIEW_AUTH_USERS",
+                style=ButtonStyle.PRIMARY,
+            ),
         ],
         [
             InlineKeyboardButton(
                 text=_["BACK_BUTTON"],
                 callback_data="SETTINGS_BACK",
+                style=ButtonStyle.SECONDARY,
             ),
-            InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),
+            InlineKeyboardButton(
+                text=_["CLOSE_BUTTON"],
+                callback_data="close",
+                style=ButtonStyle.DANGER,
+            ),
         ],
     ]
     return buttons
@@ -82,32 +137,52 @@ def playmode_users_markup(
 ):
     buttons = [
         [
-            InlineKeyboardButton(text=_["ST_B_10"], callback_data="SEARCH_MODE_INFO"),
+            InlineKeyboardButton(
+                text=_["ST_B_10"],
+                callback_data="SEARCH_MODE_INFO",
+                style=ButtonStyle.SECONDARY,
+            ),
             InlineKeyboardButton(
                 text=_["ST_B_11"] if Direct == True else _["ST_B_12"],
                 callback_data="TOGGLE_SEARCH_MODE",
+                style=ButtonStyle.SUCCESS if Direct == True else ButtonStyle.DANGER,
             ),
         ],
         [
-            InlineKeyboardButton(text=_["ST_B_13"], callback_data="CHANNEL_MODE_INFO"),
+            InlineKeyboardButton(
+                text=_["ST_B_13"],
+                callback_data="CHANNEL_MODE_INFO",
+                style=ButtonStyle.SECONDARY,
+            ),
             InlineKeyboardButton(
                 text=_["ST_B_8"] if Group == True else _["ST_B_9"],
                 callback_data="TOGGLE_CHANNEL_MODE",
+                style=ButtonStyle.SUCCESS if Group == True else ButtonStyle.DANGER,
             ),
         ],
         [
-            InlineKeyboardButton(text=_["ST_B_14"], callback_data="PLAY_TYPE_INFO"),
+            InlineKeyboardButton(
+                text=_["ST_B_14"],
+                callback_data="PLAY_TYPE_INFO",
+                style=ButtonStyle.SECONDARY,
+            ),
             InlineKeyboardButton(
                 text=_["ST_B_8"] if Playtype == True else _["ST_B_9"],
                 callback_data="TOGGLE_PLAY_TYPE",
+                style=ButtonStyle.SUCCESS if Playtype == True else ButtonStyle.DANGER,
             ),
         ],
         [
             InlineKeyboardButton(
                 text=_["BACK_BUTTON"],
                 callback_data="SETTINGS_BACK",
+                style=ButtonStyle.SECONDARY,
             ),
-            InlineKeyboardButton(text=_["CLOSE_BUTTON"], callback_data="close"),
+            InlineKeyboardButton(
+                text=_["CLOSE_BUTTON"],
+                callback_data="close",
+                style=ButtonStyle.DANGER,
+            ),
         ],
     ]
     return buttons
