@@ -583,12 +583,14 @@ class YouTubeAPI:
             )
 
             return session
-            async def download_with_ytdlp(
-            url,
-            filepath,
-            headers=None,
-            max_retries=3
-        ):
+
+
+async def download_with_ytdlp(
+    url,
+    filepath,
+    headers=None,
+    max_retries=3
+):
 
             default_headers = {
                 "User-Agent": (
