@@ -1,10 +1,9 @@
-﻿# Authored By Certified Coders © 2025
 import re
 from typing import Union
 
 import aiohttp
 from bs4 import BeautifulSoup
-from youtubesearchpython.aio import VideosSearch
+from youtubesearchpython.__future__ import VideosSearch
 
 
 class RessoAPI:
