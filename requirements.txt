@@ -15,7 +15,10 @@ gtts
 hachoir
 heroku3
 httpx[http2]==0.27.2
-kurigram==2.2.13
+
+pyrofork==2.3.45
+tgcrypto
+
 lexica-api
 motor
 nekosbest
@@ -46,7 +49,6 @@ speedtest-cli
 SpeechRecognition
 spotipy
 telegraph
-tgcrypto
 unidecode
 wget
 
