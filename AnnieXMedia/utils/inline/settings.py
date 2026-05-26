@@ -3,7 +3,6 @@
 from typing import Union
 
 from pyrogram.types import InlineKeyboardButton
-from pyrogram.enums import ButtonStyle
 
 
 def setting_markup(_):
