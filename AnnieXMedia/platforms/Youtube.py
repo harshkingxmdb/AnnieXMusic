@@ -682,8 +682,7 @@ except Exception:
 
 finally:
     session.close()
-    
-        
+     
         async def audio_dl(vid_id):
 
             try:
