@@ -1,7 +1,6 @@
 # Authored By Certified Coders © 2025
 
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.enums import ButtonStyle
 from AnnieXMedia import app
 
 TOTAL_SECTIONS = 29
