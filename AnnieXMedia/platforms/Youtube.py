@@ -648,48 +648,37 @@ async def download_with_ytdlp(
 
             if os.path.exists(filepath):
                 os.remove(filepath)
+return None
 
-            return None
 
-        async def download_with_requests_fallback(
+async def download_with_requests_fallback(
+    url,
+    filepath,
+    headers=None
+):
+    session = create_session()
+
+    try:
+        response = session.get(
             url,
-            filepath,
-            headers=None
-        ):
+            headers=headers,
+            stream=True,
+            timeout=(10, 60)
+        )
 
-            session = create_session()
+        response.raise_for_status()
 
-            try:
+        with open(filepath, "wb") as file:
+            for chunk in response.iter_content(
+                chunk_size=1024 * 1024
+            ):
+                if chunk:
+                    file.write(chunk)
 
-                response = session.get(
-                    url,
-                    headers=headers,
-                    stream=True,
-                    timeout=(10, 60)
-                )
+        return filepath
 
-                response.raise_for_status()
-
-                with open(filepath, "wb") as file:
-
-                    for chunk in response.iter_content(
-                        chunk_size=1024 * 1024
-                    ):
-
-                        if chunk:
-                            file.write(chunk)
-
-                return filepath
-
-            except Exception:
-                logger.exception(
-                    "Requests fallback failed"
-                )
-
-                if os.path.exists(filepath):
-                    os.remove(filepath)
-
-                return None
+    except Exception:
+        return None
 
             finally:
                 session.close()
