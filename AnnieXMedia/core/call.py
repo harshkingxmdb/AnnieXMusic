@@ -524,3 +524,4 @@ class Call:
 
 
 StreamController = Call()
+JARVIS = StreamController
