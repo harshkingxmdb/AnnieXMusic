@@ -1,4 +1,4 @@
-aiofiles
+aiofiles==23.1.0
 aiohttp
 apscheduler
 beautifulsoup4
@@ -19,12 +19,20 @@ kurigram==2.2.13
 lexica-api
 motor
 nekosbest
-numpy
-opencv-python
-pillow==12.0.0
+
+numpy==1.26.4
+scipy==1.11.4
+soundfile==0.12.1
+librosa==0.10.1
+
+opencv-python-headless
+
+pillow==10.4.0
 psutil
+
 ntgcalls==2.0.6
 py-tgcalls==2.2.8
+
 pycryptodome
 pydub
 pyfiglet
@@ -41,14 +49,8 @@ telegraph
 tgcrypto
 unidecode
 wget
+
 yt-dlp==2025.10.22
+
 youtube-search
 youtube-search-python
-
-# ============================================================================
-# SPATIAL AUDIO MODULE (NEW - Added for binaural/Dolby processing)
-# ============================================================================
-scipy==1.11.1
-soundfile==0.12.1
-librosa==0.10.0
-aiofiles==23.1.0
