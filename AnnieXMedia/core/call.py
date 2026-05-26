@@ -513,4 +513,14 @@ class Call:
                     assistant = await group_assistant(self, update.chat_id)
                     await self.play(assistant, update.chat_id)
             
-            
+   elif isinstance(update, ChatUpdate):
+                status = update.status
+                if (status & ChatUpdate.Status.LEFT_CALL) or (status & CRITICAL):
+                    await self.stop_stream(update.chat_id)
+                    return
+
+        for assistant in assistants:
+            assistant.on_update()(unified_update_handler)
+
+
+StreamController = Call()         
