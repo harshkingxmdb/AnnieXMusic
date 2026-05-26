@@ -659,30 +659,31 @@ async def download_with_requests_fallback(
     session = create_session()
 
     try:
-        response = session.get(
-            url,
-            headers=headers,
-            stream=True,
-            timeout=(10, 60)
-        )
+    response = session.get(
+        url,
+        headers=headers,
+        stream=True,
+        timeout=(10, 60)
+    )
 
-        response.raise_for_status()
+    response.raise_for_status()
 
-        with open(filepath, "wb") as file:
-            for chunk in response.iter_content(
-                chunk_size=1024 * 1024
-            ):
-                if chunk:
-                    file.write(chunk)
+    with open(filepath, "wb") as file:
+        for chunk in response.iter_content(
+            chunk_size=1024 * 1024
+        ):
+            if chunk:
+                file.write(chunk)
 
-        return filepath
+    return filepath
 
-    except Exception:
-        return None
+except Exception:
+    return None
 
-            finally:
-                session.close()
-
+finally:
+    session.close()
+    
+        
         async def audio_dl(vid_id):
 
             try:
